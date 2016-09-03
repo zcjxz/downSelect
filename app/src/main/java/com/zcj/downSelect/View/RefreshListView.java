@@ -35,7 +35,6 @@ public class RefreshListView extends ListView implements AbsListView.OnScrollLis
     private TextView tv_time;
     private RotateAnimation upAnimation;
     private RotateAnimation downAnimation;
-    private boolean isFirst = true;
     private boolean isLoadingMore=false;//现在是否处于加载更多
     private View footer;
     private int footerHeight;
@@ -120,19 +119,15 @@ public class RefreshListView extends ListView implements AbsListView.OnScrollLis
     public boolean onTouchEvent(MotionEvent event) {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                if (getFirstVisiblePosition() == 0) {
-                    isFirst = true;
+
                     startY = (int) event.getY();
-                }else{
-                    isFirst=false;
-                }
+
                 break;
             case MotionEvent.ACTION_MOVE:
                 if (CurrentState == REFRESH) {
                     break;
                 }
                 if (getFirstVisiblePosition() == 0) {
-                    if (isFirst) {
                         float deltaY =event.getY() - startY;
                         float paddingTop = deltaY - headerHeight;
                         if (paddingTop > -headerHeight) {
@@ -148,10 +143,9 @@ public class RefreshListView extends ListView implements AbsListView.OnScrollLis
                             }
                             return true;
                         }
-                    } else {
-                        startY = event.getY();
-                        isFirst = true;
-                    }
+                }else{
+                    //当前不是第一item不是headerView，重新设置startY;
+                    startY=event.getY();
                 }
                 break;
             case MotionEvent.ACTION_UP:
